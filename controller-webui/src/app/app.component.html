@@ -1,0 +1,17 @@
+<h1>Territories Controller</h1>
+
+<ng-container *ngIf="gameState$ | async as gameState">
+  <h2 *ngIf="gameState.isEndGame" class="mat-headline-1">{{ gameState.winner }} Wins!</h2>
+</ng-container>
+
+<section *ngFor="let node of states$ | async">
+
+  <h2>{{ node.name }}</h2>
+    
+  <app-capture-bar [red]="node.red" [blue]="node.blue" [scoreToWin]="scoreToWin"></app-capture-bar>
+
+</section>
+
+<br/><br/>
+<button mat-raised-button (click)="reset()">RESET</button>
+<button mat-raised-button (click)="endGame()">END GAME</button>
