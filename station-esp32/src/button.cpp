@@ -40,3 +40,8 @@ bool Button::isPressed()
   this->lastState = reading;
   return false;
 }
+
+bool Button::isDown()
+{
+  return state;
+}

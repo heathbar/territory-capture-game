@@ -12,6 +12,7 @@ class Button {
     Button();
     Button(short pin);
     bool isPressed();
+    bool isDown();
 
 };
 #endif

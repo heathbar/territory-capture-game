@@ -4,11 +4,21 @@
   <h2 *ngIf="gameState.isEndGame" class="mat-headline-1">{{ gameState.winner }} Wins!</h2>
 </ng-container>
 
-<section *ngFor="let node of states$ | async">
+<mat-form-field class="example-full-width">
+  <mat-label>Score to win</mat-label>
+  <input matInput type="number" [(ngModel)]="scoreToWinModel">
+</mat-form-field>
 
-  <h2>{{ node.name }}</h2>
+<section *ngFor="let station of scores$ | async" class="mat-elevation-z8">
+
+  <h2>
+    <ng-container *ngIf="station.name != 'Total'">
+      Station
+    </ng-container>
+    {{ station.name }}
+  </h2>
     
-  <app-capture-bar [red]="node.red" [blue]="node.blue" [scoreToWin]="scoreToWin"></app-capture-bar>
+  <app-capture-bar [red]="station.red" [blue]="station.blue" [scoreToWin]="scoreToWin"></app-capture-bar>
 
 </section>
 

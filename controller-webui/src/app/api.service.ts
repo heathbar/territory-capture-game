@@ -3,19 +3,19 @@ import { BehaviorSubject, Observable, shareReplay } from 'rxjs';
 
 declare const Paho: any;
 
-export interface MqttMessage {
-  topic: string;
-  value: string;
+export interface StateMessage {
+  stationId: string;
+  state: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
-export class MqttService {
+export class ApiService {
   private ws!: WebSocket;
 
-  private _messages: BehaviorSubject<MqttMessage> = new BehaviorSubject({topic: 'Total', value: '0'});
-  get messages$(): Observable<MqttMessage> {
+  private _messages: BehaviorSubject<StateMessage> = new BehaviorSubject({stationId: 'Total', state: '0'});
+  get messages$(): Observable<StateMessage> {
     return this._messages.asObservable().pipe(shareReplay());
   }
 
@@ -24,7 +24,8 @@ export class MqttService {
   async connect() {
     return new Promise((resolve, reject) => {
       console.log('Trying to open a WebSocket connection...');
-      this.ws = new WebSocket(`ws://192.168.4.1/ws`);
+      // this.ws = new WebSocket(`ws://192.168.4.1/ws`);
+      this.ws = new WebSocket(`ws://${location.host}/ws`);
       this.ws.onopen    = (event: Event) => resolve(event);
       this.ws.onclose   = this.onClose.bind(this);
       this.ws.onmessage = this.onMessage.bind(this);
@@ -40,19 +41,15 @@ export class MqttService {
     const payload = JSON.parse(event.data);
     console.log('onMessage: ', payload);
 
-    const topic: string = payload.topic.replace('state/', '');
-    this._messages.next({ topic: topic, value: payload.message });
+    const stationId: string = payload.stationId;
+    this._messages.next({ stationId: stationId, state: payload.state });
   }
 
   reset() {
-    this.send('ctrl', '0');
+    this.send('0', '0');
   }
 
-  endGame() {
-    this.send('ctrl', '1');
-  }
-
-  send(topic: string, message: string) {
-    return this.ws.send(JSON.stringify({ topic, message }));
+  send(stationId: string, message: string) {
+    return this.ws.send(JSON.stringify({ stationId, message }));
   }
 }
